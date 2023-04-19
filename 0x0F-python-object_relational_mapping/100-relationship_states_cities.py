@@ -1,12 +1,13 @@
 #!/usr/bin/python3
-""" prints the first State object from
-the database hbtn_0e_6_usa, script takes 3 arguments
+"""creates the State “California”
+with the City “San Francisco”
+from the database hbtn_0e_100_usa
 """
 import sys
-from model_state import Base, State
-
 from sqlalchemy import (create_engine)
 from sqlalchemy.orm import sessionmaker
+from relationship_state import State
+from relationship_city import Base, City
 
 if __name__ == "__main__":
     engine = create_engine(
@@ -18,8 +19,9 @@ if __name__ == "__main__":
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
-    state = session.query(State).first()
-    if not state:
-        print("Nothing")
-    print("{}: {}".format(state.id, state.name))
-    session.close()
+    new_state = State(name = "California")
+    new_city = City(name = "San Francisco", state=new_state)
+    new_state.cities.append(new_city)
+    session.add(new_state)
+    session.add(new_city)
+    session.commit()
